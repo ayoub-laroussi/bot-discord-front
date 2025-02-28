@@ -5,6 +5,7 @@ import { PromoDetailComponent } from './components/promo-detail/promo-detail.com
 import { RessourcesComponent } from './components/ressources/ressources.component';
 import { SignalementsComponent } from './components/signalements/signalements.component';
 import { CommentairesComponent } from './components/commentaires/commentaires.component';
+import { LogsComponent } from './components/logs/logs.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -14,4 +15,5 @@ export const routes: Routes = [
   { path: 'ressources', component: RessourcesComponent },
   { path: 'signalements', component: SignalementsComponent },
   { path: 'commentaires', component: CommentairesComponent },
+  { path: 'logs', component: LogsComponent },
 ];
