@@ -18,17 +18,36 @@
     </div>
     
     <!-- Navigation -->
-    <nav class="flex-1">
-        <ul class="space-y-2">
-            <li *ngFor="let item of navItems">
-                <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-3 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
-                    </svg>
-                    <span>{{ item.label }}</span>
-                </a>
-            </li>
-        </ul>
+    <nav class="flex-1 overflow-y-auto">
+        <!-- Section Onboarding -->
+        <div class="mb-6">
+            <h3 class="text-white text-xs font-semibold uppercase tracking-wider px-4 mb-2 opacity-70">Onboarding</h3>
+            <ul class="space-y-1">
+                <li *ngFor="let item of getItemsBySection('Onboarding')">
+                    <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-2 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
+                        </svg>
+                        <span>{{ item.label }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Section Community -->
+        <div>
+            <h3 class="text-white text-xs font-semibold uppercase tracking-wider px-4 mb-2 opacity-70">Community</h3>
+            <ul class="space-y-1">
+                <li *ngFor="let item of getItemsBySection('Community')">
+                    <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-2 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
+                        </svg>
+                        <span>{{ item.label }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </nav>
     
     <!-- Pied de page -->
