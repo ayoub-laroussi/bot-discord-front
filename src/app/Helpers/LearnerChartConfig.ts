@@ -15,8 +15,8 @@ export class LearnerChartConfig {
         // These value should be retrieved from the API
         data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56],
         fill: true,
-        borderColor: '#ce0033',
-        backgroundColor: '#CE003326',
+        borderColor: '#E40046',
+        backgroundColor: '#E4004626',
         tension: 0.1,
       },
     ],

@@ -14,7 +14,7 @@ export class PromosChartConfig {
         label: 'Promos active par mois',
         //These values should be retrieved from the API
         data: ['3', '12', '7', '9', '16', '3', '8', '10', '2', '8', '1', '3'],
-        backgroundColor: '#CE003380',
+        backgroundColor: '#E4004680',
       },
     ],
   };
