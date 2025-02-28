@@ -138,7 +138,9 @@ export class LogsComponent implements OnInit, OnDestroy {
    * @param date Date à formater
    * @returns Date formatée
    */
-  formatDate(date: Date): string {
+  formatDate(date: Date | undefined): string {
+    if (!date) return 'N/A';
+    
     return new Date(date).toLocaleString('fr-FR', {
       day: '2-digit',
       month: '2-digit',
