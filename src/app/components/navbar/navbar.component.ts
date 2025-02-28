@@ -69,9 +69,15 @@ export class NavbarComponent implements OnInit {
       section: 'Community'
     },
     {
+      path: '/commentaires',
+      label: 'Commentaires',
+      icon: 'fa-solid fa-comment',
+      section: 'Community'
+    },
+    {
       path: '/sondage',
       label: 'Sondage',
-      icon: 'fas fa-poll',
+      icon: 'fa-regular fa-envelope',
       section: 'Feedback'
     }
   ];

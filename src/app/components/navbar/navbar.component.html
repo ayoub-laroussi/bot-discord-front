@@ -1,15 +1,13 @@
 <section class="bg-[#E40046] w-[250px] h-screen py-8 px-4 flex flex-col fixed left-0 top-0">
     <!-- Logo Simplon -->
     <div class="mb-10">
-        <img class="w-[180px] block mx-auto" src="assets/images/logo-simplon-white.svg" alt="Logo Simplon">
+        <img class="w-[180px] block mx-auto" src="assets/images/simplon-logo.png" alt="Logo Simplon">
     </div>
     
     <!-- Profil utilisateur -->
     <div class="flex items-center mb-10 px-4 user-profile">
         <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E40046]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+            <i class="fas fa-user text-[#E40046]"></i>
         </div>
         <div>
             <p class="text-white text-sm font-medium">{{ userInfo.name }}</p>
@@ -25,9 +23,7 @@
             <ul class="space-y-1">
                 <li *ngFor="let item of getItemsBySection('Onboarding')">
                     <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-2 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
-                        </svg>
+                        <i [class]="item.icon + ' mr-3 w-5 text-center'"></i>
                         <span>{{ item.label }}</span>
                     </a>
                 </li>
@@ -35,14 +31,25 @@
         </div>
         
         <!-- Section Community -->
-        <div>
+        <div class="mb-6">
             <h3 class="text-white text-xs font-semibold uppercase tracking-wider px-4 mb-2 opacity-70">Community</h3>
             <ul class="space-y-1">
                 <li *ngFor="let item of getItemsBySection('Community')">
                     <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-2 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
-                        </svg>
+                        <i [class]="item.icon + ' mr-3 w-5 text-center'"></i>
+                        <span>{{ item.label }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Section Feedback -->
+        <div>
+            <h3 class="text-white text-xs font-semibold uppercase tracking-wider px-4 mb-2 opacity-70">Feedback</h3>
+            <ul class="space-y-1">
+                <li *ngFor="let item of getItemsBySection('Feedback')">
+                    <a [routerLink]="item.path" routerLinkActive="active-link" class="flex items-center text-white py-2 px-4 rounded-md transition-colors duration-200 hover:bg-white hover:bg-opacity-20">
+                        <i [class]="item.icon + ' mr-3 w-5 text-center'"></i>
                         <span>{{ item.label }}</span>
                     </a>
                 </li>
@@ -53,9 +60,7 @@
     <!-- Pied de page -->
     <div class="mt-auto pt-6 pb-4 px-4">
         <a href="javascript:void(0)" (click)="logout()" class="flex items-center text-white opacity-70 hover:opacity-100 transition-opacity duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <i class="fas fa-sign-out-alt mr-3"></i>
             <span>Déconnexion</span>
         </a>
         <p class="text-white text-xs opacity-50 mt-4">© {{ currentYear }} Simplon.co</p>
