@@ -1,0 +1,199 @@
+<div class="commentaires-container">
+  <div class="header">
+    <h1>Gestion des commentaires</h1>
+    <p class="text-gray-600">Consultez et gérez les commentaires des utilisateurs</p>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+      <!-- Barre de recherche -->
+      <div class="relative flex-grow">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+        <input 
+          type="text" 
+          class="w-full py-2 px-4 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E40046] focus:border-[#E40046]" 
+          placeholder="Rechercher un commentaire..." 
+          (input)="onSearchChange($any($event.target).value)"
+          [value]="searchTerm"
+        >
+      </div>
+
+      <!-- Boutons de filtres -->
+      <div class="flex gap-2">
+        <button 
+          class="flex items-center gap-2 py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+          (click)="toggleFilters()"
+        >
+          <i class="fas fa-filter text-[#E40046]"></i>
+          <span>Filtres</span>
+          <i [class]="showFilters() ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        </button>
+        <button 
+          class="flex items-center gap-2 py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+          (click)="resetFilters()"
+        >
+          <i class="fas fa-times text-[#E40046]"></i>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Panneau de filtres -->
+    <div *ngIf="showFilters()" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 animate-fadeIn">
+      <!-- Filtre par ressource -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Ressource</label>
+        <div class="flex flex-wrap gap-2">
+          <button 
+            class="px-3 py-1 rounded-full text-sm transition-all duration-200"
+            [class.bg-[#E40046]]="!activeFilters.id_resource"
+            [class.text-white]="!activeFilters.id_resource"
+            [class.bg-gray-100]="activeFilters.id_resource"
+            [class.text-gray-700]="activeFilters.id_resource"
+            (click)="applyResourceFilter(null)"
+          >
+            Toutes
+          </button>
+          <button 
+            *ngFor="let resource of commentaires | uniqueResources" 
+            class="px-3 py-1 rounded-full text-sm transition-all duration-200"
+            [class.bg-[#E40046]]="activeFilters.id_resource === resource.id_resource"
+            [class.text-white]="activeFilters.id_resource === resource.id_resource"
+            [class.bg-gray-100]="activeFilters.id_resource !== resource.id_resource"
+            [class.text-gray-700]="activeFilters.id_resource !== resource.id_resource"
+            (click)="applyResourceFilter(resource.id_resource)"
+          >
+            {{ resource.resource_title }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Filtre par membre -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Membre</label>
+        <div class="flex flex-wrap gap-2">
+          <button 
+            class="px-3 py-1 rounded-full text-sm transition-all duration-200"
+            [class.bg-[#E40046]]="!activeFilters.id_member"
+            [class.text-white]="!activeFilters.id_member"
+            [class.bg-gray-100]="activeFilters.id_member"
+            [class.text-gray-700]="activeFilters.id_member"
+            (click)="applyMemberFilter(null)"
+          >
+            Tous
+          </button>
+          <button 
+            *ngFor="let member of commentaires | uniqueMembers" 
+            class="px-3 py-1 rounded-full text-sm transition-all duration-200"
+            [class.bg-[#E40046]]="activeFilters.id_member === member.id_member"
+            [class.text-white]="activeFilters.id_member === member.id_member"
+            [class.bg-gray-100]="activeFilters.id_member !== member.id_member"
+            [class.text-gray-700]="activeFilters.id_member !== member.id_member"
+            (click)="applyMemberFilter(member.id_member)"
+          >
+            {{ member.member_name }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div class="flex flex-col items-center justify-center py-12" *ngIf="isLoading()">
+    <div class="w-12 h-12 border-4 border-gray-200 border-t-[#E40046] rounded-full animate-spin mb-4"></div>
+    <p class="text-gray-600">Chargement des commentaires...</p>
+  </div>
+
+  <!-- Liste des commentaires -->
+  <div class="grid grid-cols-1 gap-6" *ngIf="!isLoading() && filteredCommentaires().length > 0">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-1" *ngFor="let commentaire of filteredCommentaires()">
+      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span class="font-medium">{{ commentaire.member_name }}</span>
+          <span class="text-gray-600">sur <span class="text-[#E40046] font-medium">{{ commentaire.resource_title }}</span></span>
+          <span class="text-gray-500 text-sm">{{ formatDate(commentaire.date_creation) }}</span>
+          <span class="text-gray-500 text-xs italic" *ngIf="isEdited(commentaire)">
+            (modifié le {{ formatDate(commentaire.date_modification!) }})
+          </span>
+        </div>
+        <div class="flex gap-2">
+          <button 
+            class="w-8 h-8 flex items-center justify-center rounded-full text-[#E40046] hover:bg-gray-100 transition-all duration-200"
+            (click)="startEditing(commentaire)" 
+            *ngIf="!editingCommentaire || editingCommentaire.id_commentaire !== commentaire.id_commentaire"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+          <button 
+            class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-gray-100 transition-all duration-200"
+            (click)="deleteCommentaire(commentaire.id_commentaire)"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Contenu du commentaire (mode normal) -->
+      <div class="px-6 py-4" *ngIf="!editingCommentaire || editingCommentaire.id_commentaire !== commentaire.id_commentaire">
+        {{ commentaire.contenu }}
+      </div>
+      
+      <!-- Contenu du commentaire (mode édition) -->
+      <div class="px-6 py-4" *ngIf="editingCommentaire && editingCommentaire.id_commentaire === commentaire.id_commentaire">
+        <textarea 
+          [(ngModel)]="newCommentContent" 
+          placeholder="Modifier le commentaire..."
+          class="w-full min-h-[100px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E40046] focus:border-[#E40046] resize-y"
+        ></textarea>
+        <div class="flex justify-end gap-2 mt-4">
+          <button 
+            class="flex items-center gap-2 py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+            (click)="cancelEditing()"
+          >
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button 
+            class="flex items-center gap-2 py-2 px-4 bg-[#E40046] text-white rounded-md hover:bg-[#c8003e] transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            (click)="saveEditing()" 
+            [disabled]="!newCommentContent.trim()"
+          >
+            <i class="fas fa-check"></i> Enregistrer
+          </button>
+        </div>
+      </div>
+      
+      <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+        <div class="flex gap-3">
+          <button 
+            class="flex items-center gap-2 py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100 transition-all duration-200 text-green-600"
+            (click)="likeCommentaire(commentaire.id_commentaire)"
+          >
+            <i class="fas fa-thumbs-up"></i> {{ commentaire.likes }}
+          </button>
+          <button 
+            class="flex items-center gap-2 py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100 transition-all duration-200 text-red-500"
+            (click)="dislikeCommentaire(commentaire.id_commentaire)"
+          >
+            <i class="fas fa-thumbs-down"></i> {{ commentaire.dislikes }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message si aucun commentaire -->
+  <div class="flex flex-col items-center justify-center py-16 text-center" *ngIf="!isLoading() && filteredCommentaires().length === 0">
+    <i class="fas fa-comments text-gray-300 text-5xl mb-4"></i>
+    <h2 class="text-xl font-medium mb-2">Aucun commentaire trouvé</h2>
+    <p class="text-gray-600 mb-6">Aucun commentaire ne correspond à vos critères de recherche.</p>
+    <button 
+      class="flex items-center gap-2 py-2 px-4 bg-[#E40046] text-white rounded-md hover:bg-[#c8003e] transition-all duration-200"
+      (click)="resetFilters()"
+    >
+      <i class="fas fa-undo"></i> Réinitialiser les filtres
+    </button>
+  </div>
+</div>

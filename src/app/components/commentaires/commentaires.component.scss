@@ -1,0 +1,496 @@
+// Variables
+$primary-color: #E40046; // Rouge Simplon
+$secondary-color: #f9fafb;
+$accent-color: #ff4081;
+$text-color: #333;
+$border-color: #e0e0e0;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$danger-color: #f44336;
+$shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+$border-radius: 4px;
+$transition: all 0.3s ease;
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Styles généraux
+.commentaires-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  color: $text-color;
+}
+
+// En-tête
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: $primary-color;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-container {
+    position: relative;
+    
+    input {
+      padding: 10px 15px 10px 35px;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-size: 14px;
+      width: 250px;
+      transition: $transition;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+      }
+    }
+    
+    i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+  }
+
+  .filter-button {
+    background-color: white;
+    color: $text-color;
+    border: 1px solid $border-color;
+    padding: 10px 15px;
+    border-radius: $border-radius;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: $transition;
+    
+    &:hover {
+      background-color: $secondary-color;
+      transform: scale(1.05);
+    }
+    
+    i {
+      font-size: 14px;
+      color: $primary-color;
+    }
+  }
+}
+
+// Panneau de filtres
+.filters-panel {
+  background-color: white;
+  border-radius: $border-radius;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease-out;
+  overflow: hidden;
+  box-shadow: $shadow;
+  
+  .filters-content {
+    padding: 20px;
+  }
+  
+  .filter-group {
+    margin-bottom: 20px;
+    
+    h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: $primary-color;
+    }
+    
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      
+      button {
+        background-color: white;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        padding: 8px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: $transition;
+        
+        &:hover {
+          background-color: $secondary-color;
+          transform: translateY(-1px);
+        }
+        
+        &.active {
+          background-color: $primary-color;
+          color: white;
+          border-color: $primary-color;
+        }
+      }
+    }
+  }
+  
+  .filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    
+    .reset-button {
+      background-color: transparent;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: $transition;
+      
+      &:hover {
+        background-color: $secondary-color;
+        transform: scale(1.05);
+      }
+      
+      i {
+        font-size: 14px;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Indicateur de chargement
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba($primary-color, 0.2);
+    border-radius: 50%;
+    border-top-color: $primary-color;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// Liste des commentaires
+.commentaires-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.commentaire-card {
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+  transition: $transition;
+  
+  &:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .commentaire-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: $secondary-color;
+    border-bottom: 1px solid $border-color;
+    
+    .commentaire-info {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      
+      .author {
+        font-weight: 500;
+      }
+      
+      .resource {
+        color: #666;
+        
+        strong {
+          color: $primary-color;
+        }
+      }
+      
+      .date {
+        color: #888;
+        font-size: 13px;
+      }
+      
+      .edited-badge {
+        font-size: 12px;
+        color: #888;
+        font-style: italic;
+      }
+    }
+    
+    .commentaire-actions {
+      display: flex;
+      gap: 5px;
+      
+      button {
+        background-color: transparent;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: $transition;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          transform: scale(1.1);
+        }
+        
+        &.edit-button {
+          color: $primary-color;
+        }
+        
+        &.delete-button {
+          color: $danger-color;
+        }
+      }
+    }
+  }
+  
+  .commentaire-content {
+    padding: 20px;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  
+  .commentaire-edit {
+    padding: 20px;
+    
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+      }
+    }
+    
+    .edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 15px;
+      
+      button {
+        padding: 8px 15px;
+        border-radius: $border-radius;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: $transition;
+        
+        &.cancel-button {
+          background-color: transparent;
+          border: 1px solid $border-color;
+          
+          &:hover {
+            background-color: $secondary-color;
+            transform: scale(1.05);
+          }
+        }
+        
+        &.save-button {
+          background-color: $primary-color;
+          color: white;
+          border: none;
+          
+          &:hover {
+            background-color: darken($primary-color, 10%);
+            transform: scale(1.05);
+          }
+          
+          &:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+  
+  .commentaire-footer {
+    padding: 10px 20px;
+    border-top: 1px solid $border-color;
+    
+    .commentaire-reactions {
+      display: flex;
+      gap: 10px;
+      
+      button {
+        background-color: transparent;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        padding: 6px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: $transition;
+        
+        &:hover {
+          background-color: $secondary-color;
+          transform: scale(1.05);
+        }
+        
+        &.like-button {
+          color: $success-color;
+          
+          &:hover {
+            background-color: rgba($success-color, 0.1);
+          }
+        }
+        
+        &.dislike-button {
+          color: $danger-color;
+          
+          &:hover {
+            background-color: rgba($danger-color, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+// État vide
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  text-align: center;
+  
+  i {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 15px;
+  }
+  
+  h2 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  p {
+    color: #666;
+    margin: 0 0 20px 0;
+  }
+  
+  .reset-button {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: $border-radius;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: $transition;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .actions {
+      width: 100%;
+      flex-direction: column;
+      
+      .search-container {
+        width: 100%;
+        
+        input {
+          width: 100%;
+        }
+      }
+      
+      .filter-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .commentaire-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    
+    .commentaire-actions {
+      align-self: flex-end;
+    }
+  }
+}
