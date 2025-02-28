@@ -71,7 +71,19 @@ export class NavbarComponent implements OnInit {
     {
       path: '/commentaires',
       label: 'Commentaires',
-      icon: 'fa-solid fa-comment',
+      icon: 'fa-regular fa-comment',
+      section: 'Community'
+    },
+    {
+      path: '/ressources',
+      label: 'Ressources',
+      icon: 'fa-regular fa-folder',
+      section: 'Community'
+    },
+    {
+      path: '/signalements',
+      label: 'Signalements',
+      icon: 'fa-regular fa-flag',
       section: 'Community'
     },
     {

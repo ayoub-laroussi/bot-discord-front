@@ -115,16 +115,21 @@ export class RessourceService {
     { id: 8, name: 'Claire Martin' }
   ];
 
-  // Données des vues (simplifiées)
-  private views: { resource_id: number, count: number }[] = [
-    { resource_id: 1, count: 1250 },
-    { resource_id: 2, count: 890 },
-    { resource_id: 3, count: 1560 },
-    { resource_id: 4, count: 2100 },
-    { resource_id: 5, count: 650 },
-    { resource_id: 6, count: 1850 },
-    { resource_id: 7, count: 980 },
-    { resource_id: 8, count: 1420 }
+  // Données des votes et signalements (remplace les vues)
+  private resourceStats: { 
+    resource_id: number, 
+    useful_votes: number, 
+    useless_votes: number, 
+    reports: number 
+  }[] = [
+    { resource_id: 1, useful_votes: 85, useless_votes: 12, reports: 2 },
+    { resource_id: 2, useful_votes: 64, useless_votes: 8, reports: 0 },
+    { resource_id: 3, useful_votes: 112, useless_votes: 15, reports: 3 },
+    { resource_id: 4, useful_votes: 156, useless_votes: 5, reports: 1 },
+    { resource_id: 5, useful_votes: 42, useless_votes: 18, reports: 4 },
+    { resource_id: 6, useful_votes: 98, useless_votes: 7, reports: 0 },
+    { resource_id: 7, useful_votes: 76, useless_votes: 9, reports: 2 },
+    { resource_id: 8, useful_votes: 103, useless_votes: 11, reports: 1 }
   ];
 
   private ressources: Ressource[] = [
@@ -140,8 +145,7 @@ export class RessourceService {
       category_id: 1, // Développement Web
       author: 'Marie Dupont',
       category: 'Développement Web',
-      tags: ['Angular', 'Frontend', 'TypeScript'],
-      views: 1250
+      tags: ['Angular', 'Frontend', 'TypeScript']
     },
     {
       id_resource: 2,
@@ -155,8 +159,7 @@ export class RessourceService {
       category_id: 2, // Base de données
       author: 'Jean Martin',
       category: 'Base de données',
-      tags: ['SQL', 'Database', 'Backend'],
-      views: 890
+      tags: ['SQL', 'Database', 'Backend']
     },
     {
       id_resource: 3,
@@ -170,8 +173,7 @@ export class RessourceService {
       category_id: 3, // Développement Mobile
       author: 'Sophie Leroux',
       category: 'Développement Mobile',
-      tags: ['React Native', 'Mobile', 'JavaScript'],
-      views: 1560
+      tags: ['React Native', 'Mobile', 'JavaScript']
     },
     {
       id_resource: 4,
@@ -185,8 +187,7 @@ export class RessourceService {
       category_id: 4, // DevOps
       author: 'Thomas Petit',
       category: 'DevOps',
-      tags: ['Git', 'GitHub', 'Versioning'],
-      views: 2100
+      tags: ['Git', 'GitHub', 'Versioning']
     },
     {
       id_resource: 5,
@@ -200,8 +201,7 @@ export class RessourceService {
       category_id: 1, // Développement Web
       author: 'Lucas Moreau',
       category: 'Développement Web',
-      tags: ['Node.js', 'API', 'Backend', 'Express'],
-      views: 650
+      tags: ['Node.js', 'API', 'Backend', 'Express']
     },
     {
       id_resource: 6,
@@ -215,8 +215,7 @@ export class RessourceService {
       category_id: 5, // Sécurité
       author: 'Emma Blanc',
       category: 'Sécurité',
-      tags: ['Cybersécurité', 'Sécurité', 'Réseau'],
-      views: 1850
+      tags: ['Cybersécurité', 'Sécurité', 'Réseau']
     },
     {
       id_resource: 7,
@@ -230,8 +229,7 @@ export class RessourceService {
       category_id: 4, // DevOps
       author: 'Pierre Dubois',
       category: 'DevOps',
-      tags: ['Docker', 'Conteneurisation', 'DevOps'],
-      views: 980
+      tags: ['Docker', 'Conteneurisation', 'DevOps']
     },
     {
       id_resource: 8,
@@ -245,8 +243,7 @@ export class RessourceService {
       category_id: 6, // Data Science
       author: 'Claire Martin',
       category: 'Data Science',
-      tags: ['Python', 'Data Science', 'Machine Learning'],
-      views: 1420
+      tags: ['Python', 'Data Science', 'Machine Learning']
     }
   ];
 
@@ -256,7 +253,17 @@ export class RessourceService {
    * Récupère toutes les ressources
    */
   getRessources(): Observable<Ressource[]> {
-    return of(this.ressources);
+    // Ajouter les statistiques (votes et signalements) à chaque ressource
+    const ressourcesWithStats = this.ressources.map(ressource => {
+      const stats = this.resourceStats.find(s => s.resource_id === ressource.id_resource);
+      return {
+        ...ressource,
+        useful_votes: stats?.useful_votes || 0,
+        useless_votes: stats?.useless_votes || 0,
+        reports: stats?.reports || 0
+      };
+    });
+    return of(ressourcesWithStats);
   }
 
   /**
@@ -264,7 +271,16 @@ export class RessourceService {
    */
   getRessourceById(id: number): Observable<Ressource | undefined> {
     const ressource = this.ressources.find(r => r.id_resource === id);
-    return of(ressource);
+    if (ressource) {
+      const stats = this.resourceStats.find(s => s.resource_id === ressource.id_resource);
+      return of({
+        ...ressource,
+        useful_votes: stats?.useful_votes || 0,
+        useless_votes: stats?.useless_votes || 0,
+        reports: stats?.reports || 0
+      });
+    }
+    return of(undefined);
   }
 
   /**
@@ -342,7 +358,18 @@ export class RessourceService {
       );
     }
     
-    return of(filteredRessources);
+    // Ajouter les statistiques (votes et signalements) à chaque ressource filtrée
+    const filteredWithStats = filteredRessources.map(ressource => {
+      const stats = this.resourceStats.find(s => s.resource_id === ressource.id_resource);
+      return {
+        ...ressource,
+        useful_votes: stats?.useful_votes || 0,
+        useless_votes: stats?.useless_votes || 0,
+        reports: stats?.reports || 0
+      };
+    });
+    
+    return of(filteredWithStats);
   }
 
   /**
@@ -360,24 +387,5 @@ export class RessourceService {
       visibilities: this.visibilities,
       members: this.members
     });
-  }
-
-  /**
-   * Incrémente le compteur de vues d'une ressource
-   */
-  incrementViews(id: number): Observable<boolean> {
-    const viewIndex = this.views.findIndex(v => v.resource_id === id);
-    if (viewIndex !== -1) {
-      this.views[viewIndex].count++;
-      
-      // Mettre à jour la propriété views dans l'objet ressource
-      const resourceIndex = this.ressources.findIndex(r => r.id_resource === id);
-      if (resourceIndex !== -1) {
-        this.ressources[resourceIndex].views = this.views[viewIndex].count;
-      }
-      
-      return of(true);
-    }
-    return of(false);
   }
 } 

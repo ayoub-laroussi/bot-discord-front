@@ -171,10 +171,9 @@ export class RessourcesComponent implements OnInit {
   }
 
   /**
-   * Ouvre une ressource et incrémente le compteur de vues
+   * Ouvre une ressource
    */
   openRessource(ressource: Ressource): void {
-    this.ressourceService.incrementViews(ressource.id_resource).subscribe();
     window.open(ressource.content_url, '_blank');
   }
 

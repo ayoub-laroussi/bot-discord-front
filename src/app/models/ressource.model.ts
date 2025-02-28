@@ -13,7 +13,9 @@ export interface Ressource {
   author?: string; // Nom du membre associé à member_id
   category?: string; // Nom de la catégorie associée à category_id
   tags?: string[]; // Tags associés à la ressource
-  views?: number; // Nombre de vues (calculé à partir de la table Reports)
+  useful_votes?: number; // Nombre de votes utiles
+  useless_votes?: number; // Nombre de votes inutiles
+  reports?: number; // Nombre de signalements
 }
 
 export interface Tag {
@@ -27,6 +29,7 @@ export interface Category {
   created_at: Date;
   updated_at: Date;
   parent_id?: number;
+  icon?: string; // Icône FontAwesome pour la catégorie
 }
 
 export interface Visibility {

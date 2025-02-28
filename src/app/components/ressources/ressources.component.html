@@ -121,7 +121,8 @@
             <th scope="col" class="table-header-default">Date</th>
             <th scope="col" class="table-header-default">Visibilité</th>
             <th scope="col" class="table-header-default">Tags</th>
-            <th scope="col" class="table-header-default">Vues</th>
+            <th scope="col" class="table-header-default">Votes</th>
+            <th scope="col" class="table-header-default">Signalements</th>
             <th scope="col" class="table-header-default">Actions</th>
           </tr>
         </thead>
@@ -188,11 +189,25 @@
               </div>
             </td>
             
-            <!-- Vues -->
+            <!-- Votes -->
+            <td class="table-data-default">
+              <div class="flex flex-col">
+                <div class="flex items-center mb-1">
+                  <i class="fas fa-thumbs-up text-green-500 mr-1"></i>
+                  <span>{{ ressource.useful_votes }}</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-thumbs-down text-red-500 mr-1"></i>
+                  <span>{{ ressource.useless_votes }}</span>
+                </div>
+              </div>
+            </td>
+            
+            <!-- Signalements -->
             <td class="table-data-default">
               <div class="flex items-center">
-                <i class="fas fa-eye text-gray-400 mr-1"></i>
-                {{ ressource.views }}
+                <i class="fas fa-flag text-amber-500 mr-1"></i>
+                <span>{{ ressource.reports }}</span>
               </div>
             </td>
             
