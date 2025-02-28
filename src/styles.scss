@@ -13,8 +13,8 @@ body {
   }
 
   .btn-primary {
-    @apply self-center font-nunito font-bold text-color-white py-[8px] px-[12px] rounded-md bg-color-red
-                    hover:bg-color-red-light disabled:bg-color-disabled;
+    @apply self-center font-nunito font-bold text-color-white py-[8px] px-[12px] rounded-md bg-[#E40046]
+                    hover:bg-[#F03366] disabled:bg-color-disabled;
   }
 
   .table-header-default {
@@ -26,6 +26,6 @@ body {
   }
 
   .navbar-link {
-    @apply w-full text-lg font-bold font-nunito text-color-white py-[4px] rounded-md hover:bg-color-red-light focus:bg-color-white focus:text-color-red;
+    @apply w-full text-lg font-bold font-nunito text-color-white py-[4px] rounded-md hover:bg-[#F03366] focus:bg-color-white focus:text-[#E40046];
   }
 }
