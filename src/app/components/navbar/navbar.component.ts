@@ -27,67 +27,67 @@ export class NavbarComponent implements OnInit {
   // Liste des éléments de navigation
   navItems: NavItem[] = [
     {
-      path: '/dashboard',
+      path: 'dashboard',
       label: 'Dashboard',
       icon: 'fas fa-th-large',
       section: 'Onboarding'
     },
     {
-      path: '/formations',
+      path: 'formations',
       label: 'Formations',
       icon: 'fas fa-book',
       section: 'Onboarding'
     },
     {
-      path: '/promos',
+      path: 'promos',
       label: 'Promos',
       icon: 'fas fa-users',
       section: 'Onboarding'
     },
     {
-      path: '/campus',
+      path: 'campus',
       label: 'Campus',
       icon: 'fas fa-building',
       section: 'Onboarding'
     },
     {
-      path: '/apprenants',
+      path: 'apprenants',
       label: 'Apprenants',
       icon: 'fas fa-user-graduate',
       section: 'Onboarding'
     },
     {
-      path: '/logs',
+      path: 'logs',
       label: 'Logs',
       icon: 'fas fa-chart-line',
       section: 'Community'
     },
     {
-      path: '/moderation',
+      path: 'moderation',
       label: 'Modération',
       icon: 'fas fa-shield-alt',
       section: 'Community'
     },
     {
-      path: '/commentaires',
+      path: 'commentaires',
       label: 'Commentaires',
       icon: 'fa-regular fa-comment',
       section: 'Community'
     },
     {
-      path: '/ressources',
+      path: 'ressources',
       label: 'Ressources',
       icon: 'fa-regular fa-folder',
       section: 'Community'
     },
     {
-      path: '/signalements',
+      path: 'signalements',
       label: 'Signalements',
       icon: 'fa-regular fa-flag',
       section: 'Community'
     },
     {
-      path: '/sondage',
+      path: 'sondage',
       label: 'Sondage',
       icon: 'fa-regular fa-envelope',
       section: 'Feedback'
