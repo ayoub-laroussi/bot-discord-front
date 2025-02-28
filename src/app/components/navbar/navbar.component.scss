@@ -1,0 +1,69 @@
+/* Tous les styles sont maintenant gérés par Tailwind CSS */
+
+/* Styles spécifiques pour la navbar */
+
+// Animation pour les liens de navigation
+a {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+  }
+  
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+// Style pour le lien actif
+.active-link {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+// Animation pour le profil utilisateur
+.user-profile {
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Effet de survol pour les icônes
+svg {
+  transition: transform 0.2s ease;
+  
+  a:hover & {
+    transform: scale(1.1);
+  }
+}
+
+// Effet d'ombre pour la navbar
+:host {
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+// Animation pour le menu déroulant
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu {
+  animation: fadeIn 0.3s ease-in-out;
+}
