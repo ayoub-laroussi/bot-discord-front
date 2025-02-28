@@ -1,0 +1,268 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-[#E40046] mb-2">Ressources</h1>
+    <p class="text-gray-600">Explorez et filtrez toutes les ressources disponibles</p>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+      <!-- Barre de recherche -->
+      <div class="relative flex-grow">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+        <input 
+          type="text" 
+          class="input-default ps-10" 
+          placeholder="Rechercher une ressource..." 
+          (input)="onSearchChange($any($event.target).value)"
+        >
+      </div>
+
+      <!-- Boutons de filtres -->
+      <div class="flex gap-2">
+        <button 
+          class="flex items-center gap-2 py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50"
+          (click)="toggleFilters()"
+        >
+          <i class="fas fa-filter text-[#E40046]"></i>
+          <span>Filtres</span>
+          <i [class]="showFilters() ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+        </button>
+        <button 
+          class="flex items-center gap-2 py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50"
+          (click)="resetFilters()"
+        >
+          <i class="fas fa-times text-[#E40046]"></i>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Panneau de filtres -->
+    <div *ngIf="showFilters()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 animate-fadeIn">
+      <!-- Filtre par type -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+        <select 
+          class="input-default" 
+          (change)="applyTypeFilter($any($event.target).value || null)"
+        >
+          <option value="">Tous les types</option>
+          <option *ngFor="let type of filterOptions.types" [value]="type">
+            {{ type | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre par catégorie -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+        <select 
+          class="input-default" 
+          (change)="applyCategorieFilter($any($event.target).value || null)"
+        >
+          <option value="">Toutes les catégories</option>
+          <option *ngFor="let categorie of filterOptions.categories" [value]="categorie">
+            {{ categorie }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre par formation -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Formation</label>
+        <select 
+          class="input-default" 
+          (change)="applyFormationFilter($any($event.target).value || null)"
+        >
+          <option value="">Toutes les formations</option>
+          <option *ngFor="let formation of filterOptions.formations" [value]="formation">
+            {{ formation }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre par campus -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Campus</label>
+        <select 
+          class="input-default" 
+          (change)="applyCampusFilter($any($event.target).value || null)"
+        >
+          <option value="">Tous les campus</option>
+          <option *ngFor="let campus of filterOptions.campus" [value]="campus">
+            {{ campus }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre par promo -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Promo</label>
+        <select 
+          class="input-default" 
+          (change)="applyPromoFilter($any($event.target).value || null)"
+        >
+          <option value="">Toutes les promos</option>
+          <option *ngFor="let promo of filterOptions.promos" [value]="promo">
+            {{ promo }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre par visibilité -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Visibilité</label>
+        <select 
+          class="input-default" 
+          (change)="applyVisibilityFilter($any($event.target).value === 'true' ? true : $any($event.target).value === 'false' ? false : null)"
+        >
+          <option value="">Toutes</option>
+          <option value="true">Publiques</option>
+          <option value="false">Privées</option>
+        </select>
+      </div>
+
+      <!-- Filtre par tags -->
+      <div class="mb-4 md:col-span-2 lg:col-span-3">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+        <div class="flex flex-wrap gap-2">
+          <button 
+            *ngFor="let tag of filterOptions.tags" 
+            class="px-3 py-1 rounded-full text-sm"
+            [class.bg-[#E40046] ]="selectedTags.includes(tag)"
+            [class.text-white]="selectedTags.includes(tag)"
+            [class.bg-gray-200]="!selectedTags.includes(tag)"
+            [class.text-gray-700]="!selectedTags.includes(tag)"
+            (click)="toggleTag(tag)"
+          >
+            {{ tag }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading()" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E40046]"></div>
+  </div>
+
+  <!-- Tableau des ressources -->
+  <div *ngIf="!isLoading() && filteredRessources().length > 0" class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="table-header-default">Type</th>
+            <th scope="col" class="table-header-default">Titre</th>
+            <th scope="col" class="table-header-default">Catégorie</th>
+            <th scope="col" class="table-header-default">Auteur</th>
+            <th scope="col" class="table-header-default">Date</th>
+            <th scope="col" class="table-header-default">Tags</th>
+            <th scope="col" class="table-header-default">Vues</th>
+            <th scope="col" class="table-header-default">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          <tr *ngFor="let ressource of filteredRessources()" class="hover:bg-gray-50">
+            <!-- Type -->
+            <td class="table-data-default">
+              <div class="flex items-center">
+                <i [class]="getTypeIcon(ressource.type) + ' text-[#E40046] mr-2'"></i>
+                <span>{{ ressource.type | titlecase }}</span>
+              </div>
+            </td>
+            
+            <!-- Titre -->
+            <td class="table-data-default">
+              <div class="font-medium text-[#E40046] cursor-pointer hover:underline" (click)="openRessource(ressource)">
+                {{ ressource.titre }}
+              </div>
+              <div class="text-xs text-gray-500 mt-1 line-clamp-2">
+                {{ ressource.description }}
+              </div>
+            </td>
+            
+            <!-- Catégorie -->
+            <td class="table-data-default">
+              {{ ressource.categorie }}
+            </td>
+            
+            <!-- Auteur -->
+            <td class="table-data-default">
+              {{ ressource.auteur }}
+            </td>
+            
+            <!-- Date -->
+            <td class="table-data-default">
+              {{ formatDate(ressource.dateCreation) }}
+            </td>
+            
+            <!-- Tags -->
+            <td class="table-data-default">
+              <div class="flex flex-wrap gap-1">
+                <span 
+                  *ngFor="let tag of ressource.tags.slice(0, 2)" 
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                >
+                  {{ tag }}
+                </span>
+                <span 
+                  *ngIf="ressource.tags.length > 2" 
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                >
+                  +{{ ressource.tags.length - 2 }}
+                </span>
+              </div>
+            </td>
+            
+            <!-- Vues -->
+            <td class="table-data-default">
+              <div class="flex items-center">
+                <i class="fas fa-eye text-gray-400 mr-1"></i>
+                {{ ressource.vues }}
+              </div>
+            </td>
+            
+            <!-- Actions -->
+            <td class="table-data-default">
+              <div class="flex items-center space-x-2">
+                <button 
+                  class="p-1 rounded-full hover:bg-gray-100" 
+                  title="Ouvrir"
+                  (click)="openRessource(ressource)"
+                >
+                  <i class="fas fa-external-link-alt text-[#E40046]"></i>
+                </button>
+                <button 
+                  *ngIf="ressource.telechargements !== undefined" 
+                  class="p-1 rounded-full hover:bg-gray-100" 
+                  title="Télécharger"
+                  (click)="downloadRessource(ressource)"
+                >
+                  <i class="fas fa-download text-[#E40046]"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Message si aucune ressource trouvée -->
+  <div *ngIf="!isLoading() && filteredRessources().length === 0" class="bg-white rounded-lg shadow-md p-8 text-center">
+    <i class="fas fa-search text-gray-400 text-5xl mb-4"></i>
+    <h3 class="text-xl font-medium text-gray-900 mb-2">Aucune ressource trouvée</h3>
+    <p class="text-gray-600 mb-4">Essayez de modifier vos critères de recherche ou de réinitialiser les filtres.</p>
+    <button 
+      class="btn-primary"
+      (click)="resetFilters()"
+    >
+      Réinitialiser les filtres
+    </button>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+// Animation pour l'apparition du panneau de filtres
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// Style pour limiter le texte à 2 lignes
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Styles pour les badges de tags
+.rounded-full {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Styles pour les boutons d'action
+button {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Style pour le survol des lignes du tableau
+tr.hover\:bg-gray-50:hover {
+  box-shadow: 0 0 0 1px rgba(228, 0, 70, 0.1);
+}
+
+// Style pour l'indicateur de chargement
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive pour les petits écrans
+@media (max-width: 768px) {
+  .table-header-default, .table-data-default {
+    padding: 0.5rem;
+  }
+  
+  .overflow-x-auto {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+}
