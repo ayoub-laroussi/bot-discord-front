@@ -42,72 +42,30 @@
 
     <!-- Panneau de filtres -->
     <div *ngIf="showFilters()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 animate-fadeIn">
-      <!-- Filtre par type -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-        <select 
-          class="input-default" 
-          (change)="applyTypeFilter($any($event.target).value || null)"
-        >
-          <option value="">Tous les types</option>
-          <option *ngFor="let type of filterOptions.types" [value]="type">
-            {{ type | titlecase }}
-          </option>
-        </select>
-      </div>
-
       <!-- Filtre par catégorie -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
         <select 
           class="input-default" 
-          (change)="applyCategorieFilter($any($event.target).value || null)"
+          (change)="applyCategoryFilter($any($event.target).value ? +$any($event.target).value : null)"
         >
           <option value="">Toutes les catégories</option>
-          <option *ngFor="let categorie of filterOptions.categories" [value]="categorie">
-            {{ categorie }}
+          <option *ngFor="let category of filterOptions.categories" [value]="category.id_category">
+            {{ category.name }}
           </option>
         </select>
       </div>
 
-      <!-- Filtre par formation -->
+      <!-- Filtre par membre (auteur) -->
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Formation</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Auteur</label>
         <select 
           class="input-default" 
-          (change)="applyFormationFilter($any($event.target).value || null)"
+          (change)="applyMemberFilter($any($event.target).value ? +$any($event.target).value : null)"
         >
-          <option value="">Toutes les formations</option>
-          <option *ngFor="let formation of filterOptions.formations" [value]="formation">
-            {{ formation }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Filtre par campus -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Campus</label>
-        <select 
-          class="input-default" 
-          (change)="applyCampusFilter($any($event.target).value || null)"
-        >
-          <option value="">Tous les campus</option>
-          <option *ngFor="let campus of filterOptions.campus" [value]="campus">
-            {{ campus }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Filtre par promo -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Promo</label>
-        <select 
-          class="input-default" 
-          (change)="applyPromoFilter($any($event.target).value || null)"
-        >
-          <option value="">Toutes les promos</option>
-          <option *ngFor="let promo of filterOptions.promos" [value]="promo">
-            {{ promo }}
+          <option value="">Tous les auteurs</option>
+          <option *ngFor="let member of filterOptions.members" [value]="member.id">
+            {{ member.name }}
           </option>
         </select>
       </div>
@@ -117,11 +75,12 @@
         <label class="block text-sm font-medium text-gray-700 mb-2">Visibilité</label>
         <select 
           class="input-default" 
-          (change)="applyVisibilityFilter($any($event.target).value === 'true' ? true : $any($event.target).value === 'false' ? false : null)"
+          (change)="applyVisibilityFilter($any($event.target).value ? +$any($event.target).value : null)"
         >
-          <option value="">Toutes</option>
-          <option value="true">Publiques</option>
-          <option value="false">Privées</option>
+          <option value="">Toutes les visibilités</option>
+          <option *ngFor="let visibility of filterOptions.visibilities" [value]="visibility.id_visibility">
+            {{ visibility.name }}
+          </option>
         </select>
       </div>
 
@@ -132,13 +91,13 @@
           <button 
             *ngFor="let tag of filterOptions.tags" 
             class="px-3 py-1 rounded-full text-sm"
-            [class.bg-[#E40046] ]="selectedTags.includes(tag)"
-            [class.text-white]="selectedTags.includes(tag)"
-            [class.bg-gray-200]="!selectedTags.includes(tag)"
-            [class.text-gray-700]="!selectedTags.includes(tag)"
-            (click)="toggleTag(tag)"
+            [class.bg-[#E40046] ]="selectedTags.includes(tag.id_tag)"
+            [class.text-white]="selectedTags.includes(tag.id_tag)"
+            [class.bg-gray-200]="!selectedTags.includes(tag.id_tag)"
+            [class.text-gray-700]="!selectedTags.includes(tag.id_tag)"
+            (click)="toggleTag(tag.id_tag)"
           >
-            {{ tag }}
+            {{ tag.tag_name }}
           </button>
         </div>
       </div>
@@ -156,11 +115,11 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th scope="col" class="table-header-default">Type</th>
-            <th scope="col" class="table-header-default">Titre</th>
             <th scope="col" class="table-header-default">Catégorie</th>
+            <th scope="col" class="table-header-default">Titre</th>
             <th scope="col" class="table-header-default">Auteur</th>
             <th scope="col" class="table-header-default">Date</th>
+            <th scope="col" class="table-header-default">Visibilité</th>
             <th scope="col" class="table-header-default">Tags</th>
             <th scope="col" class="table-header-default">Vues</th>
             <th scope="col" class="table-header-default">Actions</th>
@@ -168,50 +127,60 @@
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white">
           <tr *ngFor="let ressource of filteredRessources()" class="hover:bg-gray-50">
-            <!-- Type -->
+            <!-- Catégorie -->
             <td class="table-data-default">
               <div class="flex items-center">
-                <i [class]="getTypeIcon(ressource.type) + ' text-[#E40046] mr-2'"></i>
-                <span>{{ ressource.type | titlecase }}</span>
+                <i [class]="getCategoryIcon(ressource.category_id) + ' text-[#E40046] mr-2'"></i>
+                <span>{{ getCategoryName(ressource.category_id) }}</span>
               </div>
             </td>
             
             <!-- Titre -->
             <td class="table-data-default">
               <div class="font-medium text-[#E40046] cursor-pointer hover:underline" (click)="openRessource(ressource)">
-                {{ ressource.titre }}
+                {{ ressource.title }}
               </div>
               <div class="text-xs text-gray-500 mt-1 line-clamp-2">
                 {{ ressource.description }}
               </div>
             </td>
             
-            <!-- Catégorie -->
-            <td class="table-data-default">
-              {{ ressource.categorie }}
-            </td>
-            
             <!-- Auteur -->
             <td class="table-data-default">
-              {{ ressource.auteur }}
+              {{ ressource.author }}
             </td>
             
             <!-- Date -->
             <td class="table-data-default">
-              {{ formatDate(ressource.dateCreation) }}
+              {{ formatDate(ressource.created_at) }}
+            </td>
+            
+            <!-- Visibilité -->
+            <td class="table-data-default">
+              <span 
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                [class.bg-green-100]="ressource.visibility_id === 1"
+                [class.text-green-800]="ressource.visibility_id === 1"
+                [class.bg-red-100]="ressource.visibility_id === 2"
+                [class.text-red-800]="ressource.visibility_id === 2"
+                [class.bg-blue-100]="ressource.visibility_id === 3"
+                [class.text-blue-800]="ressource.visibility_id === 3"
+              >
+                {{ getVisibilityName(ressource.visibility_id) }}
+              </span>
             </td>
             
             <!-- Tags -->
             <td class="table-data-default">
               <div class="flex flex-wrap gap-1">
                 <span 
-                  *ngFor="let tag of ressource.tags.slice(0, 2)" 
+                  *ngFor="let tag of ressource.tags?.slice(0, 2)" 
                   class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
                 >
                   {{ tag }}
                 </span>
                 <span 
-                  *ngIf="ressource.tags.length > 2" 
+                  *ngIf="ressource.tags && ressource.tags.length > 2" 
                   class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
                 >
                   +{{ ressource.tags.length - 2 }}
@@ -223,7 +192,7 @@
             <td class="table-data-default">
               <div class="flex items-center">
                 <i class="fas fa-eye text-gray-400 mr-1"></i>
-                {{ ressource.vues }}
+                {{ ressource.views }}
               </div>
             </td>
             
@@ -236,14 +205,6 @@
                   (click)="openRessource(ressource)"
                 >
                   <i class="fas fa-external-link-alt text-[#E40046]"></i>
-                </button>
-                <button 
-                  *ngIf="ressource.telechargements !== undefined" 
-                  class="p-1 rounded-full hover:bg-gray-100" 
-                  title="Télécharger"
-                  (click)="downloadRessource(ressource)"
-                >
-                  <i class="fas fa-download text-[#E40046]"></i>
                 </button>
               </div>
             </td>

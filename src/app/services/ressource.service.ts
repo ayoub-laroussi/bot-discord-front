@@ -1,148 +1,252 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Ressource, RessourceFilters } from '../models/ressource.model';
+import { Ressource, RessourceFilters, Tag, Category, Visibility } from '../models/ressource.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RessourceService {
   // Données fictives pour simuler une API
+  private visibilities: Visibility[] = [
+    { id_visibility: 1, name: 'Public' },
+    { id_visibility: 2, name: 'Private' },
+    { id_visibility: 3, name: 'Members Only' }
+  ];
+
+  private categories: Category[] = [
+    { 
+      id_category: 1, 
+      name: 'Développement Web', 
+      created_at: new Date('2023-01-15'), 
+      updated_at: new Date('2023-01-15') 
+    },
+    { 
+      id_category: 2, 
+      name: 'Base de données', 
+      created_at: new Date('2023-01-20'), 
+      updated_at: new Date('2023-01-20') 
+    },
+    { 
+      id_category: 3, 
+      name: 'Développement Mobile', 
+      created_at: new Date('2023-02-05'), 
+      updated_at: new Date('2023-02-05') 
+    },
+    { 
+      id_category: 4, 
+      name: 'DevOps', 
+      created_at: new Date('2023-02-10'), 
+      updated_at: new Date('2023-02-10') 
+    },
+    { 
+      id_category: 5, 
+      name: 'Sécurité', 
+      created_at: new Date('2023-03-01'), 
+      updated_at: new Date('2023-03-01') 
+    },
+    { 
+      id_category: 6, 
+      name: 'Data Science', 
+      created_at: new Date('2023-03-15'), 
+      updated_at: new Date('2023-03-15') 
+    }
+  ];
+
+  private tags: Tag[] = [
+    { id_tag: 1, tag_name: 'Angular' },
+    { id_tag: 2, tag_name: 'Frontend' },
+    { id_tag: 3, tag_name: 'TypeScript' },
+    { id_tag: 4, tag_name: 'SQL' },
+    { id_tag: 5, tag_name: 'Database' },
+    { id_tag: 6, tag_name: 'Backend' },
+    { id_tag: 7, tag_name: 'React Native' },
+    { id_tag: 8, tag_name: 'Mobile' },
+    { id_tag: 9, tag_name: 'JavaScript' },
+    { id_tag: 10, tag_name: 'Git' },
+    { id_tag: 11, tag_name: 'GitHub' },
+    { id_tag: 12, tag_name: 'Versioning' },
+    { id_tag: 13, tag_name: 'Node.js' },
+    { id_tag: 14, tag_name: 'API' },
+    { id_tag: 15, tag_name: 'Express' },
+    { id_tag: 16, tag_name: 'Cybersécurité' },
+    { id_tag: 17, tag_name: 'Réseau' },
+    { id_tag: 18, tag_name: 'Docker' },
+    { id_tag: 19, tag_name: 'Conteneurisation' },
+    { id_tag: 20, tag_name: 'Python' },
+    { id_tag: 21, tag_name: 'Machine Learning' }
+  ];
+
+  // Table de liaison ressource-tag
+  private resourceTags: { resource_id: number, tag_id: number }[] = [
+    { resource_id: 1, tag_id: 1 },
+    { resource_id: 1, tag_id: 2 },
+    { resource_id: 1, tag_id: 3 },
+    { resource_id: 2, tag_id: 4 },
+    { resource_id: 2, tag_id: 5 },
+    { resource_id: 2, tag_id: 6 },
+    { resource_id: 3, tag_id: 7 },
+    { resource_id: 3, tag_id: 8 },
+    { resource_id: 3, tag_id: 9 },
+    { resource_id: 4, tag_id: 10 },
+    { resource_id: 4, tag_id: 11 },
+    { resource_id: 4, tag_id: 12 },
+    { resource_id: 5, tag_id: 13 },
+    { resource_id: 5, tag_id: 14 },
+    { resource_id: 5, tag_id: 15 },
+    { resource_id: 5, tag_id: 6 },
+    { resource_id: 6, tag_id: 16 },
+    { resource_id: 6, tag_id: 17 },
+    { resource_id: 7, tag_id: 18 },
+    { resource_id: 7, tag_id: 19 },
+    { resource_id: 8, tag_id: 20 },
+    { resource_id: 8, tag_id: 21 },
+    { resource_id: 8, tag_id: 6 }
+  ];
+
+  // Données des membres (simplifiées)
+  private members: { id: number, name: string }[] = [
+    { id: 1, name: 'Marie Dupont' },
+    { id: 2, name: 'Jean Martin' },
+    { id: 3, name: 'Sophie Leroux' },
+    { id: 4, name: 'Thomas Petit' },
+    { id: 5, name: 'Lucas Moreau' },
+    { id: 6, name: 'Emma Blanc' },
+    { id: 7, name: 'Pierre Dubois' },
+    { id: 8, name: 'Claire Martin' }
+  ];
+
+  // Données des vues (simplifiées)
+  private views: { resource_id: number, count: number }[] = [
+    { resource_id: 1, count: 1250 },
+    { resource_id: 2, count: 890 },
+    { resource_id: 3, count: 1560 },
+    { resource_id: 4, count: 2100 },
+    { resource_id: 5, count: 650 },
+    { resource_id: 6, count: 1850 },
+    { resource_id: 7, count: 980 },
+    { resource_id: 8, count: 1420 }
+  ];
+
   private ressources: Ressource[] = [
     {
-      id: 1,
-      titre: 'Introduction à Angular',
+      id_resource: 1,
+      title: 'Introduction à Angular',
       description: 'Cours complet sur les bases d\'Angular',
-      type: 'cours',
-      url: 'https://example.com/angular-intro',
-      dateCreation: new Date('2023-10-15'),
-      auteur: 'Marie Dupont',
-      categorie: 'Développement Web',
+      content_url: 'https://example.com/angular-intro',
+      created_at: new Date('2023-10-15'),
+      updated_at: new Date('2023-10-15'),
+      visibility_id: 1, // Public
+      member_id: 1, // Marie Dupont
+      category_id: 1, // Développement Web
+      author: 'Marie Dupont',
+      category: 'Développement Web',
       tags: ['Angular', 'Frontend', 'TypeScript'],
-      formation: 'Développeur Web',
-      campus: 'Paris',
-      promo: 'Promo 2023',
-      estPublic: true,
-      vues: 1250,
-      telechargements: 450
+      views: 1250
     },
     {
-      id: 2,
-      titre: 'Bases de données SQL',
+      id_resource: 2,
+      title: 'Bases de données SQL',
       description: 'Documentation sur les requêtes SQL avancées',
-      type: 'document',
-      url: 'https://example.com/sql-doc',
-      dateCreation: new Date('2023-09-22'),
-      auteur: 'Jean Martin',
-      categorie: 'Base de données',
+      content_url: 'https://example.com/sql-doc',
+      created_at: new Date('2023-09-22'),
+      updated_at: new Date('2023-09-22'),
+      visibility_id: 1, // Public
+      member_id: 2, // Jean Martin
+      category_id: 2, // Base de données
+      author: 'Jean Martin',
+      category: 'Base de données',
       tags: ['SQL', 'Database', 'Backend'],
-      formation: 'Data Analyst',
-      campus: 'Lyon',
-      promo: 'Promo 2023',
-      estPublic: true,
-      vues: 890,
-      telechargements: 320
+      views: 890
     },
     {
-      id: 3,
-      titre: 'Tutoriel React Native',
+      id_resource: 3,
+      title: 'Tutoriel React Native',
       description: 'Vidéo explicative sur le développement mobile avec React Native',
-      type: 'video',
-      url: 'https://example.com/react-native-video',
-      dateCreation: new Date('2023-11-05'),
-      auteur: 'Sophie Leroux',
-      categorie: 'Développement Mobile',
+      content_url: 'https://example.com/react-native-video',
+      created_at: new Date('2023-11-05'),
+      updated_at: new Date('2023-11-05'),
+      visibility_id: 1, // Public
+      member_id: 3, // Sophie Leroux
+      category_id: 3, // Développement Mobile
+      author: 'Sophie Leroux',
+      category: 'Développement Mobile',
       tags: ['React Native', 'Mobile', 'JavaScript'],
-      formation: 'Développeur Mobile',
-      campus: 'Marseille',
-      promo: 'Promo 2023',
-      estPublic: true,
-      vues: 1560,
-      telechargements: 0
+      views: 1560
     },
     {
-      id: 4,
-      titre: 'Guide Git & GitHub',
+      id_resource: 4,
+      title: 'Guide Git & GitHub',
       description: 'Documentation complète sur l\'utilisation de Git et GitHub',
-      type: 'document',
-      url: 'https://example.com/git-guide',
-      dateCreation: new Date('2023-08-18'),
-      auteur: 'Thomas Petit',
-      categorie: 'DevOps',
+      content_url: 'https://example.com/git-guide',
+      created_at: new Date('2023-08-18'),
+      updated_at: new Date('2023-08-18'),
+      visibility_id: 1, // Public
+      member_id: 4, // Thomas Petit
+      category_id: 4, // DevOps
+      author: 'Thomas Petit',
+      category: 'DevOps',
       tags: ['Git', 'GitHub', 'Versioning'],
-      formation: 'DevOps',
-      campus: 'Lille',
-      promo: 'Promo 2022',
-      estPublic: true,
-      vues: 2100,
-      telechargements: 780
+      views: 2100
     },
     {
-      id: 5,
-      titre: 'API REST avec Node.js',
+      id_resource: 5,
+      title: 'API REST avec Node.js',
       description: 'Cours sur la création d\'API REST avec Node.js et Express',
-      type: 'cours',
-      url: 'https://example.com/nodejs-api',
-      dateCreation: new Date('2023-12-01'),
-      auteur: 'Lucas Moreau',
-      categorie: 'Développement Web',
+      content_url: 'https://example.com/nodejs-api',
+      created_at: new Date('2023-12-01'),
+      updated_at: new Date('2023-12-01'),
+      visibility_id: 2, // Private
+      member_id: 5, // Lucas Moreau
+      category_id: 1, // Développement Web
+      author: 'Lucas Moreau',
+      category: 'Développement Web',
       tags: ['Node.js', 'API', 'Backend', 'Express'],
-      formation: 'Développeur Web',
-      campus: 'Paris',
-      promo: 'Promo 2023',
-      estPublic: false,
-      vues: 650,
-      telechargements: 210
+      views: 650
     },
     {
-      id: 6,
-      titre: 'Cybersécurité pour débutants',
+      id_resource: 6,
+      title: 'Cybersécurité pour débutants',
       description: 'Introduction aux concepts de base de la cybersécurité',
-      type: 'cours',
-      url: 'https://example.com/cybersecurity-basics',
-      dateCreation: new Date('2023-07-12'),
-      auteur: 'Emma Blanc',
-      categorie: 'Sécurité',
+      content_url: 'https://example.com/cybersecurity-basics',
+      created_at: new Date('2023-07-12'),
+      updated_at: new Date('2023-07-12'),
+      visibility_id: 1, // Public
+      member_id: 6, // Emma Blanc
+      category_id: 5, // Sécurité
+      author: 'Emma Blanc',
+      category: 'Sécurité',
       tags: ['Cybersécurité', 'Sécurité', 'Réseau'],
-      formation: 'Expert Cybersécurité',
-      campus: 'Bordeaux',
-      promo: 'Promo 2022',
-      estPublic: true,
-      vues: 1850,
-      telechargements: 620
+      views: 1850
     },
     {
-      id: 7,
-      titre: 'Tutoriel Docker',
+      id_resource: 7,
+      title: 'Tutoriel Docker',
       description: 'Vidéo sur l\'utilisation de Docker pour la conteneurisation',
-      type: 'video',
-      url: 'https://example.com/docker-tutorial',
-      dateCreation: new Date('2023-10-28'),
-      auteur: 'Pierre Dubois',
-      categorie: 'DevOps',
+      content_url: 'https://example.com/docker-tutorial',
+      created_at: new Date('2023-10-28'),
+      updated_at: new Date('2023-10-28'),
+      visibility_id: 1, // Public
+      member_id: 7, // Pierre Dubois
+      category_id: 4, // DevOps
+      author: 'Pierre Dubois',
+      category: 'DevOps',
       tags: ['Docker', 'Conteneurisation', 'DevOps'],
-      formation: 'DevOps',
-      campus: 'Lyon',
-      promo: 'Promo 2023',
-      estPublic: true,
-      vues: 980,
-      telechargements: 0
+      views: 980
     },
     {
-      id: 8,
-      titre: 'Ressources Python Data Science',
+      id_resource: 8,
+      title: 'Ressources Python Data Science',
       description: 'Collection de liens vers des ressources pour la data science avec Python',
-      type: 'lien',
-      url: 'https://example.com/python-data-science',
-      dateCreation: new Date('2023-09-05'),
-      auteur: 'Claire Martin',
-      categorie: 'Data Science',
+      content_url: 'https://example.com/python-data-science',
+      created_at: new Date('2023-09-05'),
+      updated_at: new Date('2023-09-05'),
+      visibility_id: 1, // Public
+      member_id: 8, // Claire Martin
+      category_id: 6, // Data Science
+      author: 'Claire Martin',
+      category: 'Data Science',
       tags: ['Python', 'Data Science', 'Machine Learning'],
-      formation: 'Data Scientist',
-      campus: 'Paris',
-      promo: 'Promo 2023',
-      estPublic: true,
-      vues: 1420,
-      telechargements: 0
+      views: 1420
     }
   ];
 
@@ -159,67 +263,82 @@ export class RessourceService {
    * Récupère une ressource par son ID
    */
   getRessourceById(id: number): Observable<Ressource | undefined> {
-    const ressource = this.ressources.find(r => r.id === id);
+    const ressource = this.ressources.find(r => r.id_resource === id);
     return of(ressource);
+  }
+
+  /**
+   * Récupère toutes les catégories
+   */
+  getCategories(): Observable<Category[]> {
+    return of(this.categories);
+  }
+
+  /**
+   * Récupère tous les tags
+   */
+  getTags(): Observable<Tag[]> {
+    return of(this.tags);
+  }
+
+  /**
+   * Récupère toutes les visibilités
+   */
+  getVisibilities(): Observable<Visibility[]> {
+    return of(this.visibilities);
   }
 
   /**
    * Filtre les ressources selon les critères spécifiés
    */
-  filterRessources(filters: RessourceFilters, searchTerm: string = ''): Observable<Ressource[]> {
+  filterRessources(filters: RessourceFilters): Observable<Ressource[]> {
     let filteredRessources = [...this.ressources];
     
     // Appliquer les filtres
-    if (filters.type) {
-      filteredRessources = filteredRessources.filter(r => r.type === filters.type);
+    if (filters.category_id) {
+      filteredRessources = filteredRessources.filter(r => r.category_id === filters.category_id);
     }
     
-    if (filters.categorie) {
-      filteredRessources = filteredRessources.filter(r => r.categorie === filters.categorie);
+    if (filters.member_id) {
+      filteredRessources = filteredRessources.filter(r => r.member_id === filters.member_id);
     }
     
-    if (filters.formation) {
-      filteredRessources = filteredRessources.filter(r => r.formation === filters.formation);
-    }
-    
-    if (filters.campus) {
-      filteredRessources = filteredRessources.filter(r => r.campus === filters.campus);
-    }
-    
-    if (filters.promo) {
-      filteredRessources = filteredRessources.filter(r => r.promo === filters.promo);
-    }
-    
-    if (filters.estPublic !== undefined) {
-      filteredRessources = filteredRessources.filter(r => r.estPublic === filters.estPublic);
+    if (filters.visibility_id) {
+      filteredRessources = filteredRessources.filter(r => r.visibility_id === filters.visibility_id);
     }
     
     if (filters.tags && filters.tags.length > 0) {
-      filteredRessources = filteredRessources.filter(r => 
-        filters.tags!.some(tag => r.tags.includes(tag))
-      );
+      filteredRessources = filteredRessources.filter(r => {
+        // Trouver tous les tag_id associés à cette ressource
+        const resourceTagIds = this.resourceTags
+          .filter(rt => rt.resource_id === r.id_resource)
+          .map(rt => rt.tag_id);
+        
+        // Vérifier si au moins un des tags recherchés est présent
+        return filters.tags!.some(tagId => resourceTagIds.includes(tagId));
+      });
     }
     
     if (filters.dateDebut) {
       filteredRessources = filteredRessources.filter(r => 
-        r.dateCreation >= filters.dateDebut!
+        r.created_at >= filters.dateDebut!
       );
     }
     
     if (filters.dateFin) {
       filteredRessources = filteredRessources.filter(r => 
-        r.dateCreation <= filters.dateFin!
+        r.created_at <= filters.dateFin!
       );
     }
     
     // Appliquer la recherche textuelle
-    if (searchTerm.trim() !== '') {
-      const term = searchTerm.toLowerCase().trim();
+    if (filters.searchTerm && filters.searchTerm.trim() !== '') {
+      const term = filters.searchTerm.toLowerCase().trim();
       filteredRessources = filteredRessources.filter(r => 
-        r.titre.toLowerCase().includes(term) || 
+        r.title.toLowerCase().includes(term) || 
         r.description.toLowerCase().includes(term) || 
-        r.auteur.toLowerCase().includes(term) ||
-        r.tags.some(tag => tag.toLowerCase().includes(term))
+        r.author?.toLowerCase().includes(term) ||
+        r.tags?.some(tag => tag.toLowerCase().includes(term))
       );
     }
     
@@ -230,42 +349,33 @@ export class RessourceService {
    * Récupère les valeurs uniques pour les filtres
    */
   getFilterOptions(): Observable<{
-    types: string[];
-    categories: string[];
-    formations: string[];
-    campus: string[];
-    promos: string[];
-    tags: string[];
+    categories: Category[];
+    tags: Tag[];
+    visibilities: Visibility[];
+    members: { id: number, name: string }[];
   }> {
     return of({
-      types: [...new Set(this.ressources.map(r => r.type))],
-      categories: [...new Set(this.ressources.map(r => r.categorie))],
-      formations: [...new Set(this.ressources.map(r => r.formation).filter(Boolean) as string[])],
-      campus: [...new Set(this.ressources.map(r => r.campus).filter(Boolean) as string[])],
-      promos: [...new Set(this.ressources.map(r => r.promo).filter(Boolean) as string[])],
-      tags: [...new Set(this.ressources.flatMap(r => r.tags))]
+      categories: this.categories,
+      tags: this.tags,
+      visibilities: this.visibilities,
+      members: this.members
     });
   }
 
   /**
    * Incrémente le compteur de vues d'une ressource
    */
-  incrementVues(id: number): Observable<boolean> {
-    const index = this.ressources.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.ressources[index].vues++;
-      return of(true);
-    }
-    return of(false);
-  }
-
-  /**
-   * Incrémente le compteur de téléchargements d'une ressource
-   */
-  incrementTelechargements(id: number): Observable<boolean> {
-    const index = this.ressources.findIndex(r => r.id === id);
-    if (index !== -1 && this.ressources[index].telechargements !== undefined) {
-      this.ressources[index].telechargements!++;
+  incrementViews(id: number): Observable<boolean> {
+    const viewIndex = this.views.findIndex(v => v.resource_id === id);
+    if (viewIndex !== -1) {
+      this.views[viewIndex].count++;
+      
+      // Mettre à jour la propriété views dans l'objet ressource
+      const resourceIndex = this.ressources.findIndex(r => r.id_resource === id);
+      if (resourceIndex !== -1) {
+        this.ressources[resourceIndex].views = this.views[viewIndex].count;
+      }
+      
       return of(true);
     }
     return of(false);
