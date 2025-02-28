@@ -1,29 +1,253 @@
-<section class="flex flex-col ml-10">
-    <p class="font-nunito font-semibold text-5xl my-6">Dashboard</p>
-    <!-- Wheels -->
-    <div class="flex flex-col gap-12">
-        <div class="flex flex-wrap gap-8">
-            <app-dashboard-wheel [maxAmountOfData]="500" [currentData]="234">
-                <p class="font-semibold text-2xl pb-4">Nombre de salons</p>
-            </app-dashboard-wheel>
-            <app-dashboard-wheel [maxAmountOfData]="200" [currentData]="150">
-                <p class="font-semibold text-2xl pb-4">Nombre de role</p>
-            </app-dashboard-wheel>
+<section class="flex flex-col ml-10 mr-10 mt-6">
+    <h1 class="font-nunito font-semibold text-4xl mb-8">Dashboard</h1>
+    
+    <!-- Première rangée : Cartes d'information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Carte 1 : Nombre total de promos -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-[#00313C] text-sm font-medium mb-1">Nombre total de promos</p>
+                    <p class="text-3xl font-bold">{{ dashboardStats.totalPromos }}</p>
+                </div>
+                <div class="bg-[#E40046] bg-opacity-10 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E40046]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center">
+                <span class="text-[#009640] flex items-center text-sm font-medium" *ngIf="dashboardStats.promosGrowth > 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {{ dashboardStats.promosGrowth }}%
+                </span>
+                <span class="text-[#E40046] flex items-center text-sm font-medium" *ngIf="dashboardStats.promosGrowth < 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    {{ dashboardStats.promosGrowth * -1 }}%
+                </span>
+                <span class="text-[#00313C] text-sm ml-2">depuis le mois dernier</span>
+            </div>
         </div>
-        <!-- Graphs -->
-        <div class="flex flex-wrap gap-8">
-            <app-dashboard-graph class="flex-1 font-semibold p-4 rounded-xl shadow-xl bg-color-white">
-                <p class="pb-2 text-2xl" graph-title>Promos</p>
-                <div graph>
-                    <canvas id="promosChart">{{ promosChart }}</canvas>
+
+        <!-- Carte 2 : Nombre d'apprenants -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-[#00313C] text-sm font-medium mb-1">Nombre d'apprenants</p>
+                    <p class="text-3xl font-bold">{{ dashboardStats.totalApprenants | number }}</p>
                 </div>
-            </app-dashboard-graph>
-            <app-dashboard-graph class="flex-1 font-semibold p-4 rounded-xl shadow-xl bg-color-white">
-                <p class="pb-2 text-2xl" graph-title>Apprenants</p>
-                <div graph>
-                    <canvas id="apprenantsChart">{{ apprenantsChart }}</canvas>
+                <div class="bg-[#FF8674] bg-opacity-10 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#FF8674]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
                 </div>
-            </app-dashboard-graph>
+            </div>
+            <div class="mt-4 flex items-center">
+                <span class="text-[#009640] flex items-center text-sm font-medium" *ngIf="dashboardStats.apprenantsGrowth > 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {{ dashboardStats.apprenantsGrowth }}%
+                </span>
+                <span class="text-[#E40046] flex items-center text-sm font-medium" *ngIf="dashboardStats.apprenantsGrowth < 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    {{ dashboardStats.apprenantsGrowth * -1 }}%
+                </span>
+                <span class="text-[#00313C] text-sm ml-2">depuis le mois dernier</span>
+            </div>
+        </div>
+
+        <!-- Carte 3 : Taux de réussite -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-[#00313C] text-sm font-medium mb-1">Taux de réussite</p>
+                    <p class="text-3xl font-bold">{{ dashboardStats.tauxReussite }}%</p>
+                </div>
+                <div class="bg-[#009640] bg-opacity-10 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#009640]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center">
+                <span class="text-[#009640] flex items-center text-sm font-medium" *ngIf="dashboardStats.tauxReussiteGrowth > 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {{ dashboardStats.tauxReussiteGrowth }}%
+                </span>
+                <span class="text-[#E40046] flex items-center text-sm font-medium" *ngIf="dashboardStats.tauxReussiteGrowth < 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    {{ dashboardStats.tauxReussiteGrowth * -1 }}%
+                </span>
+                <span class="text-[#00313C] text-sm ml-2">depuis le mois dernier</span>
+            </div>
+        </div>
+
+        <!-- Carte 4 : Taux d'insertion -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-[#00313C] text-sm font-medium mb-1">Taux d'insertion</p>
+                    <p class="text-3xl font-bold">{{ dashboardStats.tauxInsertion }}%</p>
+                </div>
+                <div class="bg-[#00313C] bg-opacity-10 p-3 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#00313C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center">
+                <span class="text-[#009640] flex items-center text-sm font-medium" *ngIf="dashboardStats.tauxInsertionGrowth > 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {{ dashboardStats.tauxInsertionGrowth }}%
+                </span>
+                <span class="text-[#E40046] flex items-center text-sm font-medium" *ngIf="dashboardStats.tauxInsertionGrowth < 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    {{ dashboardStats.tauxInsertionGrowth * -1 }}%
+                </span>
+                <span class="text-[#00313C] text-sm ml-2">depuis le mois dernier</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deuxième rangée : Graphiques -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Graphique des promos -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-semibold text-xl">Promos par mois</h2>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 text-sm bg-[#E40046] text-white rounded-md" (click)="changePeriod('year', 'promos')">Année</button>
+                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md" (click)="changePeriod('month', 'promos')">Mois</button>
+                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md" (click)="changePeriod('week', 'promos')">Semaine</button>
+                </div>
+            </div>
+            <div class="h-64">
+                <canvas id="promosChart">{{ promosChart }}</canvas>
+            </div>
+        </div>
+
+        <!-- Graphique des apprenants -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-semibold text-xl">Apprenants par mois</h2>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 text-sm bg-[#E40046] text-white rounded-md" (click)="changePeriod('year', 'apprenants')">Année</button>
+                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md" (click)="changePeriod('month', 'apprenants')">Mois</button>
+                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md" (click)="changePeriod('week', 'apprenants')">Semaine</button>
+                </div>
+            </div>
+            <div class="h-64">
+                <canvas id="apprenantsChart">{{ apprenantsChart }}</canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troisième rangée : Statistiques et Promos récentes -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Statistiques -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md lg:col-span-1">
+            <h2 class="font-semibold text-xl mb-6">Statistiques</h2>
+            
+            <!-- Statistique 1 -->
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-[#00313C]">Promos en cours</span>
+                    <span class="text-sm font-medium">{{ dashboardStats.promosEnCours }}/{{ dashboardStats.totalPromos }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-[#E40046] h-2 rounded-full" [style.width.%]="(dashboardStats.promosEnCours / dashboardStats.totalPromos) * 100"></div>
+                </div>
+            </div>
+            
+            <!-- Statistique 2 -->
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-[#00313C]">Apprenants actifs</span>
+                    <span class="text-sm font-medium">{{ dashboardStats.apprenantsActifs }}/{{ dashboardStats.totalApprenants }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-[#FF8674] h-2 rounded-full" [style.width.%]="(dashboardStats.apprenantsActifs / dashboardStats.totalApprenants) * 100"></div>
+                </div>
+            </div>
+            
+            <!-- Statistique 3 -->
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-[#00313C]">Taux d'assiduité</span>
+                    <span class="text-sm font-medium">{{ dashboardStats.tauxAssiduite }}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-[#009640] h-2 rounded-full" [style.width.%]="dashboardStats.tauxAssiduite"></div>
+                </div>
+            </div>
+            
+            <!-- Statistique 4 -->
+            <div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-[#00313C]">Satisfaction</span>
+                    <span class="text-sm font-medium">{{ dashboardStats.satisfaction }}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-[#00313C] h-2 rounded-full" [style.width.%]="dashboardStats.satisfaction"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promos récentes -->
+        <div class="bg-color-white p-6 rounded-xl shadow-md lg:col-span-2">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-semibold text-xl">Promos récentes</h2>
+                <a routerLink="/promos" class="text-[#E40046] text-sm font-medium hover:underline">Voir tout</a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de début</th>
+                            <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr *ngFor="let promo of recentPromos" class="hover:bg-gray-50">
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ promo.nom }}</div>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ promo.lieu }}</div>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">{{ promo.dateDebut }}</div>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                      [ngClass]="{'bg-green-100 text-green-800': promo.statut === 'En cours', 
+                                                 'bg-yellow-100 text-yellow-800': promo.statut === 'À venir',
+                                                 'bg-gray-100 text-gray-800': promo.statut === 'Terminé'}">
+                                    {{ promo.statut }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>
