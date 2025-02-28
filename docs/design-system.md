@@ -16,7 +16,7 @@ Contenu :
 **Palette de Couleurs**
 
 ```scss
---color-primary: #ce0033; //Background Nav & buttons (Rouge Simplon)
+--color-primary: #E40046; //Background Nav & buttons (Rouge Simplon)
 --color-white: #ffffff; //Background Cards (Blanc)
 --color-body: #f0f0f0; //Background body (Blanc foncé)
 --color-select: #f8fafc; //Background selects (Gris clair)
