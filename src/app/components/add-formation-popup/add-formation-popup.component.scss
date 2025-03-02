@@ -1,0 +1,70 @@
+// Styles spécifiques pour le composant popup d'ajout de formation
+:host {
+  display: block;
+}
+
+// Animation pour le popup
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.fixed {
+  animation: fadeIn 0.3s ease-in-out;
+  
+  .bg-white {
+    animation: slideIn 0.3s ease-out;
+  }
+}
+
+// Style pour les boutons
+button {
+  transition: all 0.2s ease-in-out;
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// Style pour le slider de popularité
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 8px;
+  border-radius: 5px;
+  background: #e5e7eb;
+  outline: none;
+  
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #E40046;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+  
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #E40046;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+} 

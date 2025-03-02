@@ -1,7 +1,14 @@
 <div class="w-full flex justify-center gap-4 mt-5">
-    <div class="step w-[50px] h-[5px] bg-color-disabled"
-         [class.active]="step === 1"></div>
-    <div class="step w-[50px] h-[5px] bg-color-disabled"
-         [class.active]="step === 2"></div>
-    <!-- Ajoutez autant de divs .step que nécessaire en fonction du nombre d'étapes -->
+    <div *ngFor="let stepConfig of steps; let i = index" 
+         class="step flex flex-col items-center cursor-pointer"
+         (click)="navigateToStep(i)">
+        <div class="w-[50px] h-[5px] bg-color-disabled mb-2"
+             [class.active]="step === i + 1"
+             [class.bg-color-red]="step === i + 1"></div>
+        <span class="text-xs font-medium" 
+              [class.text-color-red]="step === i + 1"
+              [class.font-bold]="step === i + 1">
+            {{ stepConfig.label }}
+        </span>
+    </div>
 </div>

@@ -1,0 +1,171 @@
+<div class="container mx-auto px-6 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Catalogue de Formations</h1>
+        <button 
+            (click)="openAddFormationPopup()"
+            class="bg-[#E40046] hover:bg-[#c8003e] text-white font-medium py-2 px-4 rounded-md flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Ajouter une formation
+        </button>
+    </div>
+
+    <!-- Composant d'onboarding partagé -->
+    <app-onboarding-header></app-onboarding-header>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
+                    <i class="fas fa-book text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Total Formations</p>
+                    <p class="text-2xl font-semibold">{{ totalFormations }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-500 mr-4">
+                    <i class="fas fa-calendar-alt text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Durée Moyenne</p>
+                    <p class="text-2xl font-semibold">{{ dureeMoyenne }} mois</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-500 mr-4">
+                    <i class="fas fa-star text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Popularité Moyenne</p>
+                    <p class="text-2xl font-semibold">{{ populariteMoyenne }}/5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+            <div class="mb-4 md:mb-0 flex-1">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="search" 
+                        name="search" 
+                        [(ngModel)]="searchTerm"
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                        placeholder="Rechercher par titre, description ou technologie...">
+                </div>
+            </div>
+            <div class="mb-4 md:mb-0 md:w-1/4">
+                <label for="niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                <select 
+                    id="niveau" 
+                    name="niveau" 
+                    [(ngModel)]="selectedNiveau"
+                    class="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]">
+                    <option value="">Tous les niveaux</option>
+                    <option *ngFor="let niveau of niveaux" [value]="niveau">{{ niveau }}</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button 
+                    (click)="resetFilters()"
+                    class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E40046]">
+                    <i class="fas fa-times mr-2"></i>
+                    Réinitialiser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Résultats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let formation of filteredFormations" class="bg-white rounded-lg shadow overflow-hidden transition-transform duration-300 hover:transform hover:scale-105">
+            <div class="h-48 bg-gray-200 relative">
+                <img 
+                    [src]="formation.image" 
+                    [alt]="formation.titre"
+                    class="w-full h-full object-cover"
+                    onerror="this.src='assets/images/formations/default.jpg'">
+                <div class="absolute top-0 right-0 bg-[#E40046] text-white px-3 py-1 rounded-bl-lg">
+                    {{ formation.duree }} mois
+                </div>
+                <div class="absolute top-0 left-0 p-2">
+                    <button 
+                        (click)="deleteFormation(formation.id); $event.stopPropagation()"
+                        class="bg-white text-red-500 hover:text-red-700 p-2 rounded-full shadow hover:shadow-md transition-all duration-200">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-semibold text-gray-800">{{ formation.titre }}</h3>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full" 
+                        [ngClass]="{
+                            'bg-green-100 text-green-800': formation.niveau === 'Débutant',
+                            'bg-yellow-100 text-yellow-800': formation.niveau === 'Intermédiaire',
+                            'bg-red-100 text-red-800': formation.niveau === 'Avancé'
+                        }">
+                        {{ formation.niveau }}
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-4">{{ formation.description }}</p>
+                
+                <!-- Popularité -->
+                <div class="flex items-center mb-4">
+                    <div class="flex mr-2">
+                        <ng-container *ngFor="let star of getStars(formation.popularite)">
+                            <i *ngIf="star === 1" class="fas fa-star text-yellow-400"></i>
+                            <i *ngIf="star === 0.5" class="fas fa-star-half-alt text-yellow-400"></i>
+                            <i *ngIf="star === 0" class="far fa-star text-yellow-400"></i>
+                        </ng-container>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ formation.popularite }}/5</span>
+                </div>
+                
+                <!-- Technologies -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span *ngFor="let tech of formation.technos" 
+                        class="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">
+                        {{ tech }}
+                    </span>
+                </div>
+                
+                <button class="w-full bg-[#E40046] hover:bg-[#c8003e] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200">
+                    Voir les détails
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message si aucun résultat -->
+    <div *ngIf="filteredFormations.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+        <i class="fas fa-search text-gray-400 text-5xl mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-800 mb-2">Aucune formation trouvée</h3>
+        <p class="text-gray-600">Essayez de modifier vos critères de recherche.</p>
+        <button 
+            (click)="resetFilters()"
+            class="mt-4 py-2 px-4 bg-[#E40046] hover:bg-[#c8003e] text-white font-medium rounded-md transition-colors duration-200">
+            Réinitialiser les filtres
+        </button>
+    </div>
+</div>
+
+<!-- Popup pour ajouter une formation -->
+<app-add-formation-popup
+    *ngIf="showAddFormationPopup"
+    (close)="closeAddFormationPopup()"
+    (addFormation)="handleAddFormation($event)">
+</app-add-formation-popup> 

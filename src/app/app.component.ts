@@ -5,6 +5,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { PromosComponent } from './components/promos/promos.component';
 import { CommentairesComponent } from './components/commentaires/commentaires.component';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,

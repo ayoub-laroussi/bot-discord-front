@@ -1,7 +1,10 @@
-<div *ngIf="person" class="bg-color-white rounded-md p-3 w-[120px] h-[170px] relative flex flex-col items-center">
-    <div class="flex justify-center items-center h-[50px]">
-        <h3 class="font-bold text-center text-sm ">{{ role }} </h3>
-    </div>
-    <img [src]="person.profilePictureUrl" alt="Photo de {{ person.name }}" class="rounded-full w-[70px]">
-    <h3 class="mt-2">{{ person.name }}</h3>
+<div class="bg-white rounded-lg shadow p-4 flex items-center" *ngIf="person">
+  <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
+    <img [src]="profileImage" alt="Profile picture" class="w-full h-full object-cover" 
+         onerror="this.src='assets/images/default-profile.jpg'">
+  </div>
+  <div>
+    <h3 class="font-medium text-gray-800">{{ displayName }}</h3>
+    <p class="text-sm text-gray-600">{{ staffRole }}</p>
+  </div>
 </div>

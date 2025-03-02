@@ -1,0 +1,32 @@
+// Styles spécifiques pour le composant Apprenants
+:host {
+  display: block;
+}
+
+// Animation pour les popups
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+app-add-learners-popup, app-edit-learner-popup {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// Style pour les boutons d'action
+button {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Style pour les barres de progression
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+} 

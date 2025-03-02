@@ -1,0 +1,126 @@
+<div class="container mx-auto px-6 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Gestion des Apprenants</h1>
+        <button 
+            (click)="openAddLearnersPopup()"
+            class="bg-[#E40046] hover:bg-[#c8003e] text-white font-medium py-2 px-4 rounded-md flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Ajouter des apprenants
+        </button>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
+                    <i class="fas fa-user-graduate text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Total Apprenants</p>
+                    <p class="text-2xl font-semibold">{{ apprenants.length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-500 mr-4">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Apprenants Actifs</p>
+                    <p class="text-2xl font-semibold">{{ getApprenantsActifs() }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-500 mr-4">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Progression Moyenne</p>
+                    <p class="text-2xl font-semibold">
+                        {{ getProgressionMoyenne() }}%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des apprenants -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Liste des apprenants</h2>
+        </div>
+        
+        <!-- Tableau des apprenants -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Promo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progression</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let apprenant of apprenants">
+                        <td class="px-6 py-4 whitespace-nowrap">{{ apprenant.nom }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ apprenant.prenom }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ apprenant.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ apprenant.promo }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span 
+                                [ngClass]="{
+                                    'bg-green-100 text-green-800': apprenant.statut === 'Actif',
+                                    'bg-red-100 text-red-800': apprenant.statut === 'Inactif'
+                                }"
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                {{ apprenant.statut }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div 
+                                    class="bg-[#E40046] h-2.5 rounded-full" 
+                                    [style.width]="apprenant.progression + '%'">
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500 mt-1">{{ apprenant.progression }}%</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button 
+                                (click)="openEditLearnerPopup(apprenant)"
+                                class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Popup pour ajouter des apprenants -->
+<app-add-learners-popup
+    *ngIf="showAddLearnersPopup"
+    (closePopup)="closeAddLearnersPopup()"
+    (formSubmitted)="handleLearnerAdd($event)">
+</app-add-learners-popup>
+
+<!-- Popup pour éditer un apprenant -->
+<app-edit-learner-popup
+    *ngIf="showEditLearnerPopup"
+    [learner]="selectedLearner"
+    (close)="closeEditLearnerPopup()"
+    (save)="handleLearnerEdit($event)">
+</app-edit-learner-popup> 

@@ -16,8 +16,10 @@ export class LogsComponent implements OnInit, OnDestroy {
   // Signaux pour l'état réactif
   logs = signal<DiscordLog[]>([]);
   selectedLevel = signal<string | null>(null);
-  isLoading = signal<boolean>(false);
-  error = signal<string | null>(null);
+  
+  // Utiliser computed au lieu d'effect pour dériver des valeurs
+  isLoading = computed(() => this.discordBotService.isLoading());
+  error = computed(() => this.discordBotService.error());
   
   // Calcul dérivé pour le statut du bot
   botStatus = computed(() => this.discordBotService.botStatus());
@@ -30,14 +32,7 @@ export class LogsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(private discordBotService: DiscordBotService) {
-    // Utiliser effect pour réagir aux changements des signaux du service
-    effect(() => {
-      this.isLoading.set(this.discordBotService.isLoading());
-    });
-    
-    effect(() => {
-      this.error.set(this.discordBotService.error());
-    });
+    // Les effects qui modifiaient des signaux ont été remplacés par des computed
   }
 
   ngOnInit(): void {

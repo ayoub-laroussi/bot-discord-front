@@ -5,12 +5,14 @@ import { RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { LearnerChartConfig } from '../../Helpers/LearnerChartConfig';
 import { PromosChartConfig } from '../../Helpers/PromosChartConfig';
+import { OnboardingHeaderComponent } from '../onboarding-header/onboarding-header.component';
+import { OnboardingService } from '../../services/onboarding.service';
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, OnboardingHeaderComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -84,6 +86,8 @@ export class DashboardComponent implements OnInit {
       statut: 'À venir'
     }
   ];
+
+  constructor(private onboardingService: OnboardingService) {}
 
   //#region ACCESSORS
   public get promosChartConfig(): any {

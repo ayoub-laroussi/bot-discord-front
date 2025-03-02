@@ -13,7 +13,7 @@
             <app-add-learners-popup-form [learner]="learner" (formSubmitted)="addLearner($event)" />
             }
             @if(!isAddingLearners && learners.length === 0){
-            <app-add-learners-popup-menu (addCsvFile)="onAddedCsvFile($event)" (addButtonClickEmitter)="onAddClick()" />
+            <app-add-learners-popup-menu (addCsvFile)="onAddedCsvFile($event)" (addButtonClick)="onAddClick()" />
             }
             @if(!isAddingLearners && learners.length !== 0) {
             <app-learners-table (editButtonClick)="onEditClick($event)" [learners]="learners" />
