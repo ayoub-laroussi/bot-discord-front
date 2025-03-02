@@ -1,0 +1,170 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Ajouter un campus</h2>
+                <button 
+                    (click)="closePopup()"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form (ngSubmit)="submitCampus()">
+                <!-- Nom du campus -->
+                <div class="mb-4">
+                    <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom du campus *</label>
+                    <input 
+                        type="text" 
+                        id="nom" 
+                        name="nom" 
+                        [(ngModel)]="campus.nom"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                        placeholder="Ex: Simplon Paris">
+                </div>
+                
+                <!-- Informations de localisation -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="adresse" class="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                        <input 
+                            type="text" 
+                            id="adresse" 
+                            name="adresse" 
+                            [(ngModel)]="campus.adresse"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: 55 Rue de Vincennes">
+                    </div>
+                    <div>
+                        <label for="ville" class="block text-sm font-medium text-gray-700 mb-1">Ville *</label>
+                        <input 
+                            type="text" 
+                            id="ville" 
+                            name="ville" 
+                            [(ngModel)]="campus.ville"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: Montreuil">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="codePostal" class="block text-sm font-medium text-gray-700 mb-1">Code postal *</label>
+                        <input 
+                            type="text" 
+                            id="codePostal" 
+                            name="codePostal" 
+                            [(ngModel)]="campus.codePostal"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: 93100">
+                    </div>
+                    <div>
+                        <label for="pays" class="block text-sm font-medium text-gray-700 mb-1">Pays *</label>
+                        <select 
+                            id="pays" 
+                            name="pays" 
+                            [(ngModel)]="campus.pays"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]">
+                            <option value="" disabled>Sélectionnez un pays</option>
+                            <option *ngFor="let p of pays" [value]="p">{{ p }}</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Coordonnées GPS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="lat" class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                        <input 
+                            type="number" 
+                            id="lat" 
+                            name="lat" 
+                            [(ngModel)]="campus.coordonnees.lat"
+                            step="0.0001"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: 48.8566">
+                    </div>
+                    <div>
+                        <label for="lng" class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                        <input 
+                            type="number" 
+                            id="lng" 
+                            name="lng" 
+                            [(ngModel)]="campus.coordonnees.lng"
+                            step="0.0001"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: 2.3522">
+                    </div>
+                </div>
+                
+                <!-- Informations de contact -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="telephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                        <input 
+                            type="text" 
+                            id="telephone" 
+                            name="telephone" 
+                            [(ngModel)]="campus.telephone"
+                            (input)="formatTelephone($event)"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: +33 1 48 57 75 80">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            [(ngModel)]="campus.email"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                            placeholder="Ex: contact@campus.simplon.co">
+                    </div>
+                </div>
+                
+                <!-- Capacité -->
+                <div class="mb-4">
+                    <label for="capacite" class="block text-sm font-medium text-gray-700 mb-1">Capacité d'accueil *</label>
+                    <input 
+                        type="number" 
+                        id="capacite" 
+                        name="capacite" 
+                        [(ngModel)]="campus.capacite"
+                        min="1"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]">
+                    <p class="text-xs text-gray-500 mt-1">Nombre maximum d'apprenants que le campus peut accueillir</p>
+                </div>
+                
+                <!-- Image URL -->
+                <div class="mb-6">
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-1">URL de l'image</label>
+                    <input 
+                        type="text" 
+                        id="image" 
+                        name="image" 
+                        [(ngModel)]="campus.image"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                        placeholder="https://example.com/image.jpg">
+                    <p class="text-xs text-gray-500 mt-1">Laissez vide pour utiliser l'image par défaut</p>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="flex justify-end space-x-3">
+                    <button 
+                        type="button"
+                        (click)="closePopup()"
+                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E40046]">
+                        Annuler
+                    </button>
+                    <button 
+                        type="submit"
+                        [disabled]="!isFormValid()"
+                        [ngClass]="{'bg-[#E40046] hover:bg-[#c8003e]': isFormValid(), 'bg-gray-300 cursor-not-allowed': !isFormValid()}"
+                        class="px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E40046]">
+                        Ajouter le campus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

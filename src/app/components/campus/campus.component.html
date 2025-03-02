@@ -1,0 +1,208 @@
+<div class="container mx-auto px-6 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Nos Campus</h1>
+        <button 
+            (click)="openAddCampusPopup()"
+            class="bg-[#E40046] hover:bg-[#c8003e] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Ajouter un campus
+        </button>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+            <div class="mb-4 md:mb-0 flex-1">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="search" 
+                        name="search" 
+                        [(ngModel)]="searchTerm"
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]"
+                        placeholder="Rechercher par nom ou ville...">
+                </div>
+            </div>
+            <div class="mb-4 md:mb-0 md:w-1/4">
+                <label for="pays" class="block text-sm font-medium text-gray-700 mb-1">Pays</label>
+                <select 
+                    id="pays" 
+                    name="pays" 
+                    [(ngModel)]="selectedPays"
+                    class="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#E40046] focus:border-[#E40046]">
+                    <option value="">Tous les pays</option>
+                    <option *ngFor="let p of pays" [value]="p">{{ p }}</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button 
+                    (click)="resetFilters()"
+                    class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E40046]">
+                    <i class="fas fa-times mr-2"></i>
+                    Réinitialiser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des campus -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let c of filteredCampus" 
+            class="bg-white rounded-lg shadow overflow-hidden cursor-pointer transition-transform duration-300 hover:transform hover:scale-105"
+            (click)="selectCampus(c)">
+            <div class="h-48 bg-gray-200 relative">
+                <img 
+                    [src]="c.image" 
+                    [alt]="c.nom"
+                    class="w-full h-full object-cover"
+                    onerror="this.src='assets/images/campus/default.jpg'">
+                <div class="absolute top-0 right-0 bg-[#E40046] text-white px-3 py-1 rounded-bl-lg">
+                    {{ c.pays }}
+                </div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ c.nom }}</h3>
+                <p class="text-gray-600 mb-4">{{ c.ville }}, {{ c.codePostal }}</p>
+                
+                <!-- Statistiques -->
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div class="text-center">
+                        <p class="text-2xl font-semibold text-[#E40046]">{{ c.capacite }}</p>
+                        <p class="text-xs text-gray-500">Capacité</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-semibold text-[#E40046]">{{ c.nbFormations }}</p>
+                        <p class="text-xs text-gray-500">Formations</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-semibold text-[#E40046]">{{ c.nbApprenants }}</p>
+                        <p class="text-xs text-gray-500">Apprenants</p>
+                    </div>
+                </div>
+                
+                <button class="w-full bg-[#E40046] hover:bg-[#c8003e] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200">
+                    Voir les détails
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message si aucun résultat -->
+    <div *ngIf="filteredCampus.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+        <i class="fas fa-search text-gray-400 text-5xl mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-800 mb-2">Aucun campus trouvé</h3>
+        <p class="text-gray-600">Essayez de modifier vos critères de recherche.</p>
+        <button 
+            (click)="resetFilters()"
+            class="mt-4 py-2 px-4 bg-[#E40046] hover:bg-[#c8003e] text-white font-medium rounded-md transition-colors duration-200">
+            Réinitialiser les filtres
+        </button>
+    </div>
+</div>
+
+<!-- Modal de détails du campus -->
+<div *ngIf="selectedCampus" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="relative">
+            <button 
+                (click)="closeCampusDetails()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none z-10">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div class="h-64 bg-gray-200 relative">
+                <img 
+                    [src]="selectedCampus.image" 
+                    [alt]="selectedCampus.nom"
+                    class="w-full h-full object-cover"
+                    onerror="this.src='assets/images/campus/default.jpg'">
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                    <h2 class="text-3xl font-bold text-white">{{ selectedCampus.nom }}</h2>
+                    <p class="text-white opacity-90">{{ selectedCampus.ville }}, {{ selectedCampus.pays }}</p>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Informations</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-5 w-5 text-[#E40046]">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="ml-3 text-gray-700">
+                                    <p>{{ selectedCampus.adresse }}</p>
+                                    <p>{{ selectedCampus.codePostal }} {{ selectedCampus.ville }}</p>
+                                    <p>{{ selectedCampus.pays }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-5 w-5 text-[#E40046]">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="ml-3 text-gray-700">
+                                    <p>{{ selectedCampus.telephone }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-5 w-5 text-[#E40046]">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="ml-3 text-gray-700">
+                                    <p>{{ selectedCampus.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Statistiques -->
+                        <div class="mt-8">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Statistiques</h3>
+                            
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                    <p class="text-3xl font-bold text-[#E40046]">{{ selectedCampus.capacite }}</p>
+                                    <p class="text-sm text-gray-600">Capacité</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                    <p class="text-3xl font-bold text-[#E40046]">{{ selectedCampus.nbFormations }}</p>
+                                    <p class="text-sm text-gray-600">Formations</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                    <p class="text-3xl font-bold text-[#E40046]">{{ selectedCampus.nbApprenants }}</p>
+                                    <p class="text-sm text-gray-600">Apprenants</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Équipe</h3>
+                        
+                        <div class="space-y-4">
+                            <app-staff-card 
+                                *ngFor="let member of selectedCampus.staff" 
+                                [person]="member">
+                            </app-staff-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popup d'ajout de campus -->
+@if(showAddCampusPopup) {
+    <app-add-campus-popup 
+        (close)="closeAddCampusPopup()"
+        (addCampus)="addNewCampus($event)">
+    </app-add-campus-popup>
+} 
